@@ -1,0 +1,53 @@
+<page>
+  <hbox>
+    <box xs="12" class="invitations-page">
+      <h2>Invitations</h2>
+      <ManageInvitation as |actions|>
+        <ul class="invitation-list tier-1">
+          {{#each model.data as |invite|}}
+              <li class="invitation">
+
+                  <hbox xs="12" class="invitation-header">
+                    <box><h3>{{invite.name}}</h3></box>
+                    <box align="end">
+                      <button {{action actions.deleteInvitation invite}}>-</button>
+                    </box>
+                  </hbox>
+
+                  <hbox>
+                    <box xs="8">
+                      <ManageAddress @address={{invite.address.content}} @onUpdate={{action actions.updateAddress invite}} />
+                    </box>
+                    <box xs="4">
+                      <h6>Guests on this Invitation</h6>
+                      <ul class="invitation-list tier-2">
+                        {{#each invite.guests as |guest|}}
+                          <li>{{guest.name}}{{if guest.isChild ' (child)' ''}}</li>
+                        {{else}}
+                          No guests for this invite yet.
+                        {{/each}}
+                        <li>
+                          <QuickAdd @onSubmit={{action actions.addGuest invite}} />
+                        </li>
+                      </ul>
+                    </box>
+                  </hbox>
+
+              </li>
+            {{else}}
+              No Invites for this group yet.
+            {{/each}}
+          <li>
+            <hbox xs="12" class="invitation-header">
+              <box>
+                <h3>
+                  <QuickAdd @onSubmit={{action actions.addInvitation}} />
+                </h3>
+              </box>
+            </hbox>
+          </li>
+        </ul>
+      </ManageInvitation>
+    </box>
+  </hbox>
+</page>

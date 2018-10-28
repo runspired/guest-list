@@ -18,6 +18,7 @@
       {{#each model.data as |guest|}}
         <tr class={{if guest.isInvited '' 'not-invited'}}>
           <td>{{guest.name}}</td>
+          <td>{{#link-to 'auth.invitations.invitation.guest' guest.invitation.id guest.id}}edit{{/link-to}}</td>
           <td>{{guest.relation}}</td>
           <td>{{guest.role}}</td>
           <td>{{guest.invitation.sideOfTheFamily}}</td>

@@ -11,8 +11,12 @@
     {{address.street}}<br>
     {{#if address.street2}}{{address.street2}}<br>{{/if}}
     {{address.zipcode}} <span class="city-state">{{address.city}}, {{address.state}}</span><br>
-    <button {{action (mut isEditing) true}}>Edit</button>
-  {{else}}
+    {{#if allowEditing}}
+      <button {{action (mut isEditing) true}}>Edit</button>
+    {{/if}}
+  {{else if allowEditing}}
     <button {{action "createAddress"}}>Add Address</button>
+  {{else}}
+    No address Available
   {{/if}}
 {{/if}}

@@ -27,6 +27,9 @@ export default class FirebaseAdapter {
     Object.assign(this, createArgs);
   }
 
+  shouldReloadRecord() { return false; }
+  shouldBackgroundReloadRecord() { return false; }
+
   _getRef(type, id) {
     let collection = this.firebase.db.collection(type);
 
@@ -156,6 +159,13 @@ export default class FirebaseAdapter {
 
     return new Promise(resolve => {
       this._getAndSubscribe(ref, resolve, (doc) => {
+        let foo = {
+          type: modelClass.modelName,
+          id
+        };
+        if (!doc || !doc.data) {
+          debugger;
+        }
         this.store.push(doc);
       })
     });

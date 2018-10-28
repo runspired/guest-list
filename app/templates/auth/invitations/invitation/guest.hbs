@@ -1,0 +1,79 @@
+<h2>{{model.guest.name}}</h2>
+
+<hbox>
+  <box xs="12" sm="6">
+    <span class="city-state">Invitation Information</span>
+    {{#if model.guest.invitation}}
+      <h4>{{model.invitation.name}}</h4>
+      <ManageAddress @address={{model.invitation.address}} @allowEditing={{false}} />
+
+      <h4>Associated Guests</h4>
+      <ul>
+        {{#each model.invitation.guests as |guest|}}
+          {{#if (not (eq guest.id model.guest.id))}}
+            <li class={{if guest.isInvited '' 'not-invited'}}>
+              {{#link-to 'auth.invitations.invitation.guest' invitation}}
+                {{guest.name}} {{if guest.isChild '(child)' ''}}
+              {{/link-to}}
+            </li>
+          {{/if}}
+        {{/each}}
+      </ul>
+
+    {{else}}
+      This Guest does not currently belong to an invitation.
+    {{/if}}
+  </box>
+  <box xs="12" sm="6">
+    {{#if isEditingGuest}}
+      <ManageGuest as |actions|>
+        <form {{action actions.updateGuest model.guest}}>
+          <table>
+            <thead>
+            <tr>
+              <th>Info</th><th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td>Relation</td><td>{{input value=model.guest.relation}}</td>
+            </tr>
+            <tr>
+              <td>Role</td><td>{{input value=model.guest.role}}</td>
+            </tr>
+            <tr>
+              <td>is a child</td><td>{{if model.guest.isChild 'Yes' 'No'}}</td>
+            </tr>
+            <tr>
+              <td>give a plus one?</td><td>{{if model.guest.hasPlusOne 'Yes' 'No'}}</td>
+            </tr>
+            </tbody>
+            <button type="submit" {{action actions.updateGuest model.guest}}>Save</button>
+          </table>
+        </form>
+      </ManageGuest>
+    {{else}}
+      <table>
+        <thead>
+        <tr>
+          <th>Info</th><th><button {{action (mut isEditingGuest) true}}>edit</button></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Relation</td><td>{{model.guest.relation}}</td>
+        </tr>
+        <tr>
+          <td>Role</td><td>{{model.guest.role}}</td>
+        </tr>
+        <tr>
+          <td>is a child</td><td>{{if model.guest.isChild 'Yes' 'No'}}</td>
+        </tr>
+        <tr>
+          <td>give a plus one?</td><td>{{if model.guest.hasPlusOne 'Yes' 'No'}}</td>
+        </tr>
+        </tbody>
+      </table>
+    {{/if}}
+  </box>
+</hbox>

@@ -12,14 +12,16 @@ Router.map(function() {
 
     this.route('groups', { path: 'groups' }, function() {
       this.route('group', { path: '/:id' }, function() {
-        this.route('invitation', { path: 'invitation/:id' }, function() {
-          this.route('guest', { path: 'guest/:id' });
+        this.route('invitation', { path: 'invitation/:inviteId' }, function() {
+          this.route('guest', { path: 'guest/:guestId' });
         });
       });
     });
 
     this.route('invitations', function() {
-      this.route('invitation');
+      this.route('invitation', { path: 'invitation/:inviteId' }, function() {
+        this.route('guest', { path: 'guest/:guestId' });
+      });
     });
 
     this.route('guests');

@@ -5,6 +5,8 @@ export default class GuestModel extends Model {
   @attr name;
   @attr({ defaultValue: '' })
   relation;
+  @attr({ defaultValue: '' })
+  role;
   @attr({ defaultValue: false })
   isChild;
   @attr({ defaultValue: true })

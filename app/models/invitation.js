@@ -4,7 +4,7 @@ const { Model } = DS;
 
 export default class InvitationModel extends Model {
   @attr name;
-  @attr({ defaultValue: 'n/a' })
+  @attr({ defaultValue: '' })
   sideOfTheWedding;
   @attr({ defaultValue: true })
   isInvited;

@@ -5,14 +5,33 @@
       <thead>
       <tr>
         <th>Name</th>
+        <th>Relation</th>
+        <th>Role</th>
+        <th>Side of the Family</th>
         <th>Invitation</th>
+        <th></th>
+        <th>Status</th>
+        <th>Address</th>
       </tr>
       </thead>
       <tbody>
       {{#each model.data as |guest|}}
-        <tr>
+        <tr class={{if guest.isInvited '' 'not-invited'}}>
           <td>{{guest.name}}</td>
+          <td>{{guest.relation}}</td>
+          <td>{{guest.role}}</td>
+          <td>{{guest.invitation.sideOfTheFamily}}</td>
           <td>{{guest.invitation.name}}</td>
+          <td>{{if guest.isChild 'Child' ''}}</td>
+          <td>{{if guest.isInvited 'Invited' 'Under Consideration'}}</td>
+          <td>
+            {{#if guest.invitation.address}}
+              <span class="city-state">
+              {{guest.invitation.address.city}},
+                {{guest.invitation.address.state}}
+            </span>
+            {{/if}}
+          </td>
         </tr>
       {{/each}}
       </tbody>

@@ -1,0 +1,24 @@
+<page>
+  <hbox>
+    <box xs="12" class="invitations-page">
+      <h2>Guests</h2>
+      {{#link-to 'auth.index'}}Home{{/link-to}}
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Invitation</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each model.data as |guest|}}
+            <tr>
+              <td>{{guest.name}}</td>
+              <td>{{guest.invitation.name}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </box>
+  </hbox>
+</page>

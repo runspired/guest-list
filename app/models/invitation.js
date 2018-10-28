@@ -4,7 +4,7 @@ const { Model } = DS;
 
 export default class InvitationModel extends Model {
   @attr name;
-  @belongsTo('group', { async: false, inverse:'invitations' }) group;
+  @belongsTo('group', { async: true, inverse:'invitations' }) group;
   @hasMany('guest', { async: true, inverse: 'invitation' }) guests;
   @belongsTo('address', { async: true, inverse: 'invitation'})
   address;

@@ -21,10 +21,12 @@ Router.map(function() {
     this.route('invitations', function() {
       this.route('invitation');
     });
+
+    this.route('guests');
   });
+
   this.route('login');
   this.route('logout');
-
 });
 
 export default Router;

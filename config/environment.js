@@ -54,7 +54,7 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    ENV.rootURL = '/your-repo-name';
+    ENV.rootURL = '/guest-list';
     ENV.locationType = 'hash';
   }
 

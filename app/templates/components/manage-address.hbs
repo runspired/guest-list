@@ -2,16 +2,15 @@
   <form onSubmit={{action "saveAddress" address}}>
     <label>Street</label>{{input value=address.street}}<br>
     <label>Street</label>{{input value=address.street2}}<br>
-    <label>City</label>{{input value=address.city}}
-    <label>State</label>{{input value=address.state}}
-    <label>Zipcode</label>{{input value=address.zipcode}}<br>
+    <label>Zipcode</label><input value={{address.zipcode}} oninput={{action "updateZipcode"}}>
+    <span class="city-state">{{address-city}}, {{address.state}}</span><br>
     <button type="submit" {{action "saveAddress" address}}>Save</button>
   </form>
 {{else}}
   {{#if address}}
     {{address.street}}<br>
-    {{address.street2}}<br>
-    {{address.city}}, {{address.state}} - {{address.zipcode}}<br>
+    {{#if address.street2}}{{address.street2}}<br>{{/if}}
+    {{address.zipcode}} <span class="city-state">{{address.city}}, {{address.state}}</span><br>
     <button {{action (mut isEditing) true}}>Edit</button>
   {{else}}
     <button {{action "createAddress"}}>Add Address</button>

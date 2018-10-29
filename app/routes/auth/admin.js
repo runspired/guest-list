@@ -7,27 +7,26 @@ export default class AuthAdminRoute extends Route {
   @service session;
 
   model() {
-    let id = this.session.auth.currentUser.uid;
-    let user;
+    let user = this.session.user;
 
-    this.store.findRecord('user', id)
-      .catch(e => {
-        let record = this.store.peekRecord('user', id);
-        if (record) {
-          run(() => record.unloadRecord());
+    return user.get('wedding')
+      .then(wedding => {
+        if (!wedding) {
+          return this.store.fetchCollection('wedding')
+            .then(weddings => {
+              return weddings.data.objectAt(0);
+            });
         }
-        record = this.store.createRecord('user', { id });
-        return record.save();
-      })
-      .then(record => {
-        user = record;
-        return record.get('wedding');
+
+        return wedding;
       })
       .then(wedding => {
         if (!wedding) {
-          wedding = this.store.createRecord('wedding', {
-            admins: [user]
-          });
+          wedding = this.store.createRecord('wedding');
+          user.set('wedding', wedding);
+          return wedding.save()
+            .then(() => user.save())
+            .then(_ => wedding);
         }
 
         return wedding;

@@ -4,11 +4,28 @@ import { service } from '@ember-decorators/service';
 import { Promise, resolve } from 'rsvp';
 
 export default class SessionService {
-  @service() firebase;
+  @service firebase;
+  @service store;
 
   constructor(createArgs) {
     Object.assign(this, createArgs);
     this.auth = this.firebase.app.auth();
+  }
+
+  getUser() {
+    let id = this.auth.currentUser.uid;
+    let user;
+
+    return this.store.queryRecord('user', { id })
+      .catch(e => {
+        let record = this.store.createRecord('user', { id, uid: id, wedding: null });
+
+        return record.save();
+      })
+      .then(user => {
+        this.user = user;
+        return user;
+      });
   }
 
   reauth() {
@@ -25,6 +42,9 @@ export default class SessionService {
           unsub();
           reject(err);
         });
+    })
+    .then(() => {
+      return this.getUser()
     });
   }
 
@@ -32,6 +52,9 @@ export default class SessionService {
     let promise = this.auth.signInWithEmailAndPassword(email, password)
       .catch(e => {
         return this.auth.createUserWithEmailAndPassword(email, password);
+      })
+      .then(() => {
+        return this.getUser()
       });
 
     return resolve(promise);

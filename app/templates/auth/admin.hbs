@@ -1,1 +1,9 @@
-<h2>Name: {{model.name}}</h2>
+<h2>Wedding Info</h2>
+<box xs="4">
+  Name: {{input value=model.name}}<br>
+  Party 1: {{input value=model.party1}}<br>
+  Party 2: {{input value=model.party2}}<br>
+  <button {{action "saveWedding" model}}>Save</button>
+</box>
+<br>
+<hr>

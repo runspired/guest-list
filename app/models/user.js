@@ -4,8 +4,8 @@ import { attr, belongsTo } from '@ember-decorators/data';
 export default class UserModel extends Model {
   @attr
   uid;
-  @attr
+  @attr({ defaultValue: '' })
   name;
-  @belongsTo('wedding', { async: true, inverse: 'admins' })
+  @belongsTo('wedding', { async: true, inverse: null })
   wedding;
 }

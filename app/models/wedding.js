@@ -2,10 +2,10 @@ import Model from 'ember-data/model';
 import { attr } from '@ember-decorators/data';
 
 export default class WeddingModel extends Model {
-  @attr
+  @attr({ defaultValue: '' })
   name;
-  @attr
+  @attr({ defaultValue: '' })
   party1;
-  @attr
+  @attr({ defaultValue: '' })
   party2;
 }

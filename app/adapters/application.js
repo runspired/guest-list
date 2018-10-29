@@ -153,6 +153,12 @@ export default class FirebaseAdapter {
     });
   }
 
+  queryRecord(store, modelClass, query) {
+    if (query.id) {
+      return this.findRecord(store, modelClass, query.id);
+    }
+  }
+
   findRecord(store, modelClass, id) {
     let ref = this.firebase.db
       .collection(modelClass.modelName)

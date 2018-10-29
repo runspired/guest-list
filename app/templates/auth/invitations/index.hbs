@@ -9,13 +9,20 @@
             <hbox xs="12" class="invitation-header">
               <box><h3>{{invite.name}}</h3></box>
               <box align="end">
-                <button {{action actions.deleteInvitation invite}}>-</button>
+                {{#link-to 'auth.invitations.invitation' invite.id}}edit{{/link-to}}
+                {{!--
+                <button {{action actions.deleteInvitation invite}}>delete</button>
+                --}}
               </box>
             </hbox>
 
             <hbox>
               <box xs="8">
-                <ManageAddress @address={{invite.address.content}} @onUpdate={{action actions.updateAddress invite}} />
+                <ManageAddress
+                  @address={{invite.address.content}}
+                  @onUpdate={{action actions.updateAddress invite}}
+                  @allowEditing=true
+                />
               </box>
               <box xs="4">
                 <h6>Guests on this Invitation</h6>

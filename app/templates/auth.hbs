@@ -1,11 +1,12 @@
 <page>
-  <div>
+  <div class="header-nav">
    <hbox>
      <box xs="4">
-       <h1>Guest List</h1>
+       <h1>{{#link-to 'auth.index'}}{{model.wedding.name}}{{/link-to}}</h1>
      </box>
      <hbox xs="8" align="center" justify="end">
-       {{#link-to 'auth.index'}}Home{{/link-to}} |
+       {{#link-to 'auth.invitations'}}Invitations{{/link-to}}
+       {{#link-to 'auth.guests'}}Guests{{/link-to}}
        {{#link-to 'auth.admin'}}Settings{{/link-to}} |
        {{#link-to 'logout'}}Signout{{/link-to}}
      </hbox>

@@ -3,7 +3,16 @@ import { action } from '@ember-decorators/object';
 import { service } from '@ember-decorators/service';
 
 export default class ManageInvitationComponent extends Component {
+  constructor() {
+    super(...arguments);
+    this.families = [
+      this.session.user.get('wedding.content.party1'),
+      this.session.user.get('wedding.content.party2'),
+    ];
+  }
+
   @service store;
+  @service session;
 
   @action
   deleteInvitation(invitation) {

@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember-decorators/service';
+import { hash } from 'rsvp';
 
 export default class AuthRoute extends Route {
   @service session;
@@ -10,5 +11,14 @@ export default class AuthRoute extends Route {
         transition.abort();
         this.transitionTo('login');
       });
+  }
+
+  model() {
+    let user = this.session.user;
+
+    return hash({
+      user,
+      wedding: user.get('wedding')
+    });
   }
 }

@@ -14,7 +14,16 @@ export default class AuthAdminRoute extends Route {
         if (!wedding) {
           return this.store.fetchCollection('wedding')
             .then(weddings => {
-              return weddings.data.objectAt(0);
+              let wedding = weddings.data.objectAt(0);
+
+              if (wedding) {
+                user.set('wedding', wedding);
+                return wedding.save()
+                  .then(() => user.save())
+                  .then(_ => wedding);
+              }
+
+              return wedding;
             });
         }
 

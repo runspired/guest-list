@@ -18,7 +18,8 @@ export default class AuthRoute extends Route {
 
     return hash({
       user,
-      wedding: user.get('wedding')
+      wedding: user.get('wedding'),
+      email: this.session.auth.currentUser.email
     });
   }
 }

@@ -15,6 +15,19 @@ export default class ManageInvitationComponent extends Component {
   @service session;
 
   @action
+  toggleInvitationStatus(invitation, status) {
+    invitation.set('isInvited', status);
+    invitation.get('guests')
+      .then(guests => {
+        guests.forEach(guest => {
+          guest.set('isInvited', status);
+          guest.save();
+        });
+        invitation.save();
+      });
+  }
+
+  @action
   saveInvitation(invitation) {
     invitation.save();
   }

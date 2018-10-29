@@ -9,11 +9,11 @@
 
       <h4>Associated Guests</h4>
       <ul>
-        {{#each model.invitation.guests as |guest|}}
-          {{#if (not (eq guest.id model.guest.id))}}
-            <li class={{if guest.isInvited '' 'not-invited'}}>
-              {{#link-to 'auth.invitations.invitation.guest' invitation}}
-                {{guest.name}} {{if guest.isChild '(child)' ''}}
+        {{#each model.invitation.guests as |relatedGuest|}}
+          {{#if (not (eq relatedGuest.id model.guest.id))}}
+            <li class={{if relatedGuest.isInvited '' 'not-invited'}}>
+              {{#link-to 'auth.invitations.invitation.guest' model.invitation.id relatedGuest.id}}
+                {{relatedGuest.name}} {{if relatedGuest.isChild '(child)' ''}}
               {{/link-to}}
             </li>
           {{/if}}
@@ -27,7 +27,7 @@
   <box xs="12" sm="6">
     {{#if isEditingGuest}}
       <ManageGuest as |actions|>
-        <form {{action actions.updateGuest model.guest}}>
+        <form onsubmit={{action (action actions.updateGuest model.guest)}}>
           <table>
             <thead>
             <tr>
@@ -36,19 +36,89 @@
             </thead>
             <tbody>
             <tr>
-              <td>Relation</td><td>{{input value=model.guest.relation}}</td>
+              <td>Relation</td>
+              <td>
+                <PowerSelect
+                  @options={{actions.relations}}
+                  @selected={{model.guest.relation}}
+                  @onchange={{action (mut model.guest.relation)}}
+                  as |relation|
+                >{{relation}}</PowerSelect>
+              </td>
             </tr>
             <tr>
-              <td>Role</td><td>{{input value=model.guest.role}}</td>
+              <td>Role</td>
+              <td>
+                <PowerSelect
+                  @options={{actions.roles}}
+                    @selected={{model.guest.role}}
+                  @onchange={{action (mut model.guest.role)}}
+                    as |relation|
+                >{{relation}}</PowerSelect>
+              </td>
             </tr>
             <tr>
-              <td>is a child</td><td>{{if model.guest.isChild 'Yes' 'No'}}</td>
+              <td>Email</td><td>{{input value=model.guest.email}}</td>
             </tr>
             <tr>
-              <td>give a plus one?</td><td>{{if model.guest.hasPlusOne 'Yes' 'No'}}</td>
+              <td>Cell #</td><td>{{input value=model.guest.mobilePhone}}</td>
+            </tr>
+            <tr>
+              <td>is invited?</td>
+              <td>
+                <XToggle
+                  @theme="light"
+                  @size="small"
+                  @value={{model.guest.isInvited}}
+                  @showLabels=true
+                  @onToggle={{action (mut model.guest.isInvited) (not model.guest.isInvited)}}
+                    as |toggle|>
+                  {{#toggle.label}}
+                    <b>{{if model.guest.isInvited 'Yes' 'No'}}</b>
+                  {{/toggle.label}}
+
+                  {{toggle.switch}}
+                </XToggle>
+              </td>
+            </tr>
+            <tr>
+              <td>is a child</td>
+              <td>
+                <XToggle
+                  @theme="light"
+                  @size="small"
+                  @value={{model.guest.isChild}}
+                  @showLabels=true
+                  @onToggle={{action (mut model.guest.isChild) (not model.guest.isChild)}}
+                    as |toggle|>
+                  {{#toggle.label}}
+                    <b>{{if model.guest.isChild 'Yes' 'No'}}</b>
+                  {{/toggle.label}}
+
+                  {{toggle.switch}}
+                </XToggle>
+              </td>
+            </tr>
+            <tr>
+              <td>has a plus one?</td>
+              <td>
+                <XToggle
+                  @theme="light"
+                  @size="small"
+                  @value={{model.guest.hasPlusOne}}
+                  @showLabels=true
+                  @onToggle={{action (mut model.guest.hasPlusOne) (not model.guest.hasPlusOne)}}
+                    as |toggle|>
+                  {{#toggle.label}}
+                    <b>{{if model.guest.hasPlusOne 'Yes' 'No'}}</b>
+                  {{/toggle.label}}
+
+                  {{toggle.switch}}
+                </XToggle>
+              </td>
             </tr>
             </tbody>
-            <button type="submit" {{action actions.updateGuest model.guest}}>Save</button>
+            <button type="submit" onclick={{action (action actions.updateGuest model.guest)}}>Save</button>
           </table>
         </form>
       </ManageGuest>
@@ -60,11 +130,28 @@
         </tr>
         </thead>
         <tbody>
+        {{#if model.guest.relation}}
+          <tr>
+            <td>Relation</td><td>{{model.guest.relation}}</td>
+          </tr>
+        {{/if}}
+        {{#if model.guest.role}}
+          <tr>
+            <td>Role</td><td>{{model.guest.role}}</td>
+          </tr>
+        {{/if}}
+        {{#if model.guest.email}}
+          <tr>
+            <td>Relation</td><td>{{model.guest.email}}</td>
+          </tr>
+        {{/if}}
+        {{#if model.guest.mobilePhone}}
+          <tr>
+            <td>Cell #</td><td>{{model.guest.mobilePhone}}</td>
+          </tr>
+        {{/if}}
         <tr>
-          <td>Relation</td><td>{{model.guest.relation}}</td>
-        </tr>
-        <tr>
-          <td>Role</td><td>{{model.guest.role}}</td>
+          <td>is invited?</td><td>{{if model.guest.isInvited 'Yes' 'No'}}</td>
         </tr>
         <tr>
           <td>is a child</td><td>{{if model.guest.isChild 'Yes' 'No'}}</td>

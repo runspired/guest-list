@@ -4,6 +4,10 @@ import { attr, belongsTo } from '@ember-decorators/data';
 export default class GuestModel extends Model {
   @attr name;
   @attr({ defaultValue: '' })
+  email;
+  @attr({ defaultValue: '' })
+  mobilePhone;
+  @attr({ defaultValue: '' })
   relation;
   @attr({ defaultValue: '' })
   role;

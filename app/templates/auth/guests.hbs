@@ -17,13 +17,14 @@
       <tbody>
       {{#each model.data as |guest|}}
         <tr class={{if guest.isInvited '' 'not-invited'}}>
-          <td>{{guest.name}}</td>
-          <td>{{#link-to 'auth.invitations.invitation.guest' guest.invitation.id guest.id}}edit{{/link-to}}</td>
+          <td>
+            {{guest.name}}{{if guest.isChild ' (child)' ''}}
+            {{#link-to 'auth.invitations.invitation.guest' guest.invitation.id guest.id}}edit{{/link-to}}
+          </td>
           <td>{{guest.relation}}</td>
           <td>{{guest.role}}</td>
           <td>{{guest.invitation.sideOfTheFamily}}</td>
           <td>{{guest.invitation.name}}</td>
-          <td>{{if guest.isChild 'Child' ''}}</td>
           <td>{{if guest.isInvited 'Invited' 'Under Consideration'}}</td>
           <td>
             {{#if guest.invitation.address}}

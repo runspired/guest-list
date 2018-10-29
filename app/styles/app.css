@@ -159,6 +159,10 @@ ul.invitation-list.tier-2 > li {
   background: #d0f0d0;
 }
 
+.invitation-header.not-invited, .not-invited {
+  background: #b05050;
+}
+
 ul.invitation-list h3 {
   margin: 0;
   text-transform: capitalize;

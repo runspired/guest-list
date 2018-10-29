@@ -1,30 +1,66 @@
 <hbox>
   <box xs="12" class="invitations-page">
     <h2>Invitations</h2>
-    <ManageInvitation as |actions|>
+    <ManageInvitation as |invitationActions|>
       <ul class="invitation-list tier-1">
         {{#each model.data as |invite|}}
           <li class="invitation">
 
-            <hbox xs="12" class="invitation-header">
+            <hbox xs="12" class="invitation-header {{if invite.isInvited '' 'not-invited'}}">
               <box><h3>{{invite.name}}</h3></box>
               <box align="end">
-                {{#link-to 'auth.invitations.invitation' invite.id}}edit{{/link-to}}
                 {{!--
-                <button {{action actions.deleteInvitation invite}}>delete</button>
+                <button {{action invitationActions.deleteInvitation invite}}>delete</button>
                 --}}
               </box>
             </hbox>
 
             <hbox>
-              <box xs="8">
+              <box xs="12" sm="4">
                 <ManageAddress
                   @address={{invite.address.content}}
-                  @onUpdate={{action actions.updateAddress invite}}
+                  @onUpdate={{action invitationActions.updateAddress invite}}
                   @allowEditing=true
                 />
               </box>
-              <box xs="4">
+              <box xs="12" sm="4">
+              <fit>
+                {{#let (meta-for invite) as |state|}}
+                  {{#if state.isEditing}}
+                    <PowerSelect
+                      @options={{invitationActions.families}}
+                      @selected={{invite.sideOfTheWedding}}
+                      @onchange={{action (mut invite.sideOfTheWedding)}}
+                        as |side|>
+                      {{side}}
+                    </PowerSelect>
+
+                    <XToggle
+                      @theme="light"
+                      @size="small"
+                      @value={{invite.isInvited}}
+                        @showLabels=true
+                      @onToggle={{action (mut invite.isInvited) (not invite.isInvited)}}
+                        as |toggle|>
+                      {{toggle.switch}}
+
+                      {{#toggle.label}}
+                        <b>{{if invite.isInvited 'Invited' 'Not Invited'}}</b>
+                      {{/toggle.label}}
+                    </XToggle>
+                    <button onclick={{actions
+                        (action invitationActions.updateInvitation invite)
+                        (action (mut state.isEditing) false)
+                      }}>Save</button>
+                  {{else}}
+                      Party: <b class="city-state">{{invite.sideOfTheWedding}}</b><br>
+                      Status: <b>{{if invite.isInvited 'Invited' 'Not Invited'}}</b><br>
+                    <button {{action (mut state.isEditing) true}}>Edit</button>
+                  {{/if}}
+                {{/let}}
+              </fit>
+              </box>
+              <box xs="12" sm="4">
                 <h6>Guests on this Invitation</h6>
                 <ul class="invitation-list tier-2">
                   {{#each invite.guests as |guest|}}
@@ -33,7 +69,7 @@
                     No guests for this invite yet.
                   {{/each}}
                   <li>
-                    <QuickAdd @onSubmit={{action actions.addGuest invite}} />
+                    <QuickAdd @onSubmit={{action invitationActions.addGuest invite}} />
                   </li>
                 </ul>
               </box>
@@ -47,7 +83,7 @@
           <hbox xs="12" class="invitation-header">
             <box>
               <h3>
-                <QuickAdd @onSubmit={{action actions.addInvitation}} />
+                <QuickAdd @onSubmit={{action invitationActions.addInvitation}} />
               </h3>
             </box>
           </hbox>

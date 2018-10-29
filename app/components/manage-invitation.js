@@ -15,6 +15,11 @@ export default class ManageInvitationComponent extends Component {
   @service session;
 
   @action
+  saveInvitation(invitation) {
+    invitation.save();
+  }
+
+  @action
   deleteInvitation(invitation) {
     let prompt = `Are you sure you want to delete the invitation for ${invitation.name}?\n\nThis invitation contains the following guests:\n\t - ${invitation.guests.map(g => g.name).join('\n\t - ')}`;
     if (confirm(prompt)) {

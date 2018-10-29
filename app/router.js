@@ -25,6 +25,7 @@ Router.map(function() {
     });
 
     this.route('guests');
+    this.route('admin');
   });
 
   this.route('login');

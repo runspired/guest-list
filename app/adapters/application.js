@@ -61,8 +61,9 @@ export default class FirebaseAdapter {
         if (isFirst === true) {
           isFirst = false;
           cb(document);
+        } else {
+          update(document);
         }
-        update(document);
       });
     }, function(error) {
       // TODO what now?
@@ -157,17 +158,26 @@ export default class FirebaseAdapter {
       .collection(modelClass.modelName)
       .doc(id);
 
-    return new Promise(resolve => {
-      this._getAndSubscribe(ref, resolve, (doc) => {
-        let foo = {
-          type: modelClass.modelName,
-          id
-        };
-        if (!doc || !doc.data) {
-          debugger;
-        }
-        this.store.push(doc);
-      })
+    return new Promise((resolve, reject) => {
+      this._getAndSubscribe(
+        ref,
+        (doc) => {
+          if (!doc || !doc.data) {
+            reject({
+              code: 404,
+              message: 'Not Found'
+            });
+          } else {
+            resolve(doc);
+          }
+        },
+        (doc) => {
+          if (doc && doc.data) {
+            this.store.push(doc);
+          } else {
+            debugger;
+          }
+        })
     });
   }
 

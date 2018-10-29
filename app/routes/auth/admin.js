@@ -18,6 +18,7 @@ export default class AuthAdminRoute extends Route {
 
               if (wedding) {
                 user.set('wedding', wedding);
+                this.session.set('wedding', wedding);
                 return wedding.save()
                   .then(() => user.save())
                   .then(_ => wedding);

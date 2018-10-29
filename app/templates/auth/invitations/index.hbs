@@ -1,6 +1,18 @@
 <hbox>
   <box xs="12" class="invitations-page">
     <h2>Invitations</h2>
+    <span class="city-state">
+      Invitations {{stats.guestCounts.invitationsToSend}} |
+      Guests {{stats.guestCounts.guestsToInvite}} |
+      Guests Missing from Invitations {{stats.guestCounts.guestsNotOnInvitations}}
+      <br>
+      Potential Invitations {{stats.guestCounts.invitationsToHold}} |
+      Potential Guests {{stats.guestCounts.guestsToHold}}
+      <br>
+      {{stats.session.wedding.party1}} guests {{stats.guestCounts.party1Guests}} |
+      {{stats.session.wedding.party2}} guests {{stats.guestCounts.party2Guests}} |
+      Guests Missing Party: {{stats.guestCounts.guestsWithoutParty}}
+    </span>
     <ManageInvitation as |invitationActions|>
       <ul class="invitation-list tier-1">
         {{#each model.data as |invite|}}
@@ -20,7 +32,7 @@
                 <ManageAddress
                   @address={{invite.address.content}}
                   @onUpdate={{action invitationActions.updateAddress invite}}
-                  @allowEditing=true
+                  @allowEditing={{true}}
                 />
               </box>
               <box xs="12" sm="4">
@@ -28,6 +40,8 @@
                 {{#let (meta-for invite) as |state|}}
                   {{#if state.isEditing}}
                     <PowerSelect
+                      @searchEnabled={{false}}
+                      @onopen={{action (mut invite.sideOfTheWedding) (if invite.sideOfTheWedding invite.sideOfTheWedding (get invitationActions.families "0"))}}
                       @options={{invitationActions.families}}
                       @selected={{invite.sideOfTheWedding}}
                       @onchange={{action (mut invite.sideOfTheWedding)}}
@@ -39,7 +53,7 @@
                       @theme="light"
                       @size="small"
                       @value={{invite.isInvited}}
-                        @showLabels=true
+                        @showLabels={{true}}
                         @onToggle={{action invitationActions.toggleInvitationStatus invite (not invite.isInvited)}}
                         as |toggle|>
                       {{toggle.switch}}

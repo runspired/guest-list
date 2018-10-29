@@ -14,7 +14,6 @@ export default class SessionService {
 
   getUser() {
     let id = this.auth.currentUser.uid;
-    let user;
 
     return this.store.queryRecord('user', { id })
       .catch(e => {
@@ -24,7 +23,11 @@ export default class SessionService {
       })
       .then(user => {
         this.user = user;
-        return user;
+        return user.get('wedding');
+      })
+      .then(wedding => {
+        this.wedding = wedding;
+        return this.user;
       });
   }
 

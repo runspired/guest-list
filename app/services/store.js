@@ -52,9 +52,4 @@ export default class StoreService extends Store {
     return resolve(collection);
   }
 
-  fetchResource(type, id) {
-    let adapter = this.adapterFor('application');
-
-
-  }
 }

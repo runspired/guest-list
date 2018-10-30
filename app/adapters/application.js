@@ -3,21 +3,8 @@ import { Promise, resolve, all } from 'rsvp';
 import {
   getRelationshipState,
   getRecordDataFromSnapshot,
-  isInverseMembershipCanonical,
   getInverseRelationship
-} from './-ember-data-utils';
-import makeId from './-generate-id-util';
-
-function saveDeletionOnInverse(snapshot, recordData, inverse) {
-  let inverseState = getRelationshipState(snapshot, inverse.kind, inverse.name);
-  inverseState.removeRecordData(recordData);
-
-  return snapshot.record.save({
-    adapterOptions: {
-      propagateSave: false
-    }
-  });
-}
+} from '../-private/-ember-data-utils';
 
 export default class FirebaseAdapter {
   @service() firebase;
@@ -29,47 +16,6 @@ export default class FirebaseAdapter {
 
   shouldReloadRecord() { return false; }
   shouldBackgroundReloadRecord() { return false; }
-
-  _getRef(type, id) {
-    let collection = this.firebase.db.collection(type);
-
-    if (typeof id !== 'undefined') {
-      return collection.doc(id);
-    }
-
-    return collection;
-  }
-
-  _getAndSubscribe(ref, cb, update) {
-    let isFirst = true;
-    ref.onSnapshot(function(snapshot) {
-      let promise;
-
-      if (snapshot.docs) {
-        let promises = snapshot.docs.map(docRef => {
-          return docRef.ref.get({ source: 'default' })
-            .then(ref => ref.data());
-        });
-        promise = all(promises);
-      } else {
-        promise = resolve(snapshot.data());
-      }
-
-      promise.then(data => {
-        let document = { data };
-
-        if (isFirst === true) {
-          isFirst = false;
-          cb(document);
-        } else {
-          update(document);
-        }
-      });
-    }, function(error) {
-      // TODO what now?
-      debugger;
-    });
-  }
 
   deleteRecord(store, modelClass, snapshot) {
     let cascadeDelete = snapshot.adapterOptions && snapshot.adapterOptions.cascadeDelete;
@@ -133,9 +79,7 @@ export default class FirebaseAdapter {
         return all(savePromises);
       })
       .then(() => {
-        return this.firebase.db
-          .collection(modelClass.modelName)
-          .doc(snapshot.id)
+        return _getRef(this.firebase.db, modelClass.modelName, snapshot.id)
           .delete()
           .then(() => {
             return { data: null };
@@ -145,9 +89,9 @@ export default class FirebaseAdapter {
 
   fetchDocument(cacheKey /*, query*/) {
     return new Promise((resolve) => {
-      let ref = this._getRef(cacheKey);
+      let ref = _getRef(this.firebase.db, cacheKey);
 
-      this._getAndSubscribe(ref, resolve, (document) => {
+      _getAndSubscribe(ref, resolve, (document) => {
         this.store.pushDocument(cacheKey, document);
       });
     });
@@ -160,12 +104,10 @@ export default class FirebaseAdapter {
   }
 
   findRecord(store, modelClass, id) {
-    let ref = this.firebase.db
-      .collection(modelClass.modelName)
-      .doc(id);
+    let ref = _getRef(this.firebase.db, modelClass.modelName, id);
 
     return new Promise((resolve, reject) => {
-      this._getAndSubscribe(
+      _getAndSubscribe(
         ref,
         (doc) => {
           if (!doc || !doc.data) {
@@ -188,16 +130,15 @@ export default class FirebaseAdapter {
   }
 
   updateRecord(store, modelClass, snapshot) {
-    let { serialized, relatedSnapshots } = this._serialize(store, modelClass.modelName, snapshot);
+    let serialized = store.serializerFor('application').serializeSnapshot(snapshot);
+    let { data, _relatedChanges } = serialized;
     let options = snapshot.adapterOptions || {};
 
-    return this.firebase.db
-      .collection(modelClass.modelName)
-      .doc(serialized.id)
-      .set(serialized)
+    return _getRef(this.firebase.db, modelClass.modelName, data.id)
+      .set(data)
       .then(() => {
         if (options.propagateSave !== false) {
-          let promises = relatedSnapshots.map(related => {
+          let promises = _relatedChanges.map(related => {
             return related.record.save({ adapterOptions: {
               propagateSave: false
             }});
@@ -208,65 +149,9 @@ export default class FirebaseAdapter {
       })
       .then(() => {
         return {
-          data: serialized
+          data: data
         };
       });
-  }
-
-  _serialize(store, type, snapshot) {
-    if (!snapshot.id) {
-      let id = makeId(type);
-      snapshot.record.set('id', id);
-      // patch store
-      store._setRecordId(snapshot._internalModel, id, snapshot._internalModel.clientId);
-      snapshot.id = id;
-      getRecordDataFromSnapshot(snapshot).id = id;
-    }
-    let serialized = {
-      id: snapshot.id,
-      type,
-      attributes: snapshot.attributes(),
-      relationships: {}
-    };
-
-    let relationshipsToSave = [];
-
-    snapshot.eachRelationship((name, meta) => {
-      let linkage = serialized.relationships[name] = {};
-      if (meta.kind === 'hasMany') {
-        let relData = snapshot.hasMany(name) || [];
-
-        linkage.data = relData.map(r => {
-          if (!isInverseMembershipCanonical(snapshot, meta.kind, name, r)) {
-            relationshipsToSave.push(r);
-          }
-
-          return {
-            id: r.id,
-            type: r.modelName
-          };
-        });
-
-      } else {
-        let relData = snapshot.belongsTo(name);
-
-        if (relData) {
-          if (!isInverseMembershipCanonical(snapshot, meta.kind, name, relData)) {
-            relationshipsToSave.push(relData);
-          }
-
-          linkage.data = {
-            id: relData.id,
-            type: relData.modelName
-          };
-        }
-      }
-    });
-
-    return {
-      serialized,
-      relatedSnapshots: relationshipsToSave
-    };
   }
 
   createRecord(store, modelClass, snapshot) {
@@ -276,4 +161,56 @@ export default class FirebaseAdapter {
   static create(createArgs) {
     return new this(createArgs);
   }
+}
+
+function saveDeletionOnInverse(snapshot, recordData, inverse) {
+  let inverseState = getRelationshipState(snapshot, inverse.kind, inverse.name);
+  inverseState.removeRecordData(recordData);
+
+  return snapshot.record.save({
+    adapterOptions: {
+      propagateSave: false
+    }
+  });
+}
+
+function _getRef(db, type, id) {
+  let collection = db.collection(type);
+
+  if (typeof id !== 'undefined') {
+    return collection.doc(id);
+  }
+
+  return collection;
+}
+
+function  _getAndSubscribe(ref, cb, update) {
+  let isFirst = true;
+  ref.onSnapshot(function(snapshot) {
+    let promise;
+
+    if (snapshot.docs) {
+      let promises = snapshot.docs.map(docRef => {
+        return docRef.ref.get({ source: 'default' })
+          .then(ref => ref.data());
+      });
+      promise = all(promises);
+    } else {
+      promise = resolve(snapshot.data());
+    }
+
+    promise.then(data => {
+      let document = { data };
+
+      if (isFirst === true) {
+        isFirst = false;
+        cb(document);
+      } else {
+        update(document);
+      }
+    });
+  }, function(error) {
+    // TODO what now?
+    debugger;
+  });
 }

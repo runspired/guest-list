@@ -67,6 +67,6 @@ export default class ManageInvitationComponent extends Component {
   @action
   updateAddress(invitation, address) {
     invitation.set('address', address);
-    address.save();
+    address.save().then(() => invitation.save())
   }
 }

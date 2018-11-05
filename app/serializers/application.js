@@ -27,10 +27,16 @@ export default class ApplicationSerializer {
       snapshot.id = id;
       getRecordDataFromSnapshot(snapshot).id = id;
     }
+    let attributes = {};
+    let dirtyAttributes = snapshot.attributes();
+    this.store.modelFor(snapshot.modelName).eachAttribute(name => {
+      attributes[name] = dirtyAttributes[name] === undefined ? '' : dirtyAttributes[name];
+    });
+
     let serialized = {
       id: snapshot.id,
       type,
-      attributes: snapshot.attributes(),
+      attributes,
       relationships: {}
     };
 

@@ -14,8 +14,32 @@
       Guests Missing Party: {{stats.guestCounts.guestsWithoutParty}}
     </span>
     <ManageInvitation as |invitationActions|>
+      <div>
+        <hbox xs="4 offset-8" align="center" justify="center">
+          <span class="city-state">Sort By: </span>
+          <PowerSelect
+              @searchEnabled={{false}}
+              @options={{arr 'name' 'id'}}
+              @selected={{listSortProperty}}
+              @onchange={{action (mut listSortProperty)}}
+            as |v|>
+            {{v}}
+          </PowerSelect>
+          {{#let (combine (arr 'all') invitationActions.families) as |searchOptions|}}
+            <span class="city-state">Filter By: </span>
+            <PowerSelect
+              @searchEnabled={{false}}
+              @options={{searchOptions}}
+              @selected={{filterSideOfTheWedding}}
+              @onchange={{action (mut filterSideOfTheWedding)}}
+              as |side|>
+              {{side}}
+            </PowerSelect>
+          {{/let}}
+        </hbox>
+      </div>
       <ul class="invitation-list tier-1">
-        {{#each model.data as |invite|}}
+        {{#each filteredInvitations as |invite|}}
           <li class="invitation">
 
             <hbox xs="12" class="invitation-header {{if invite.isInvited '' 'not-invited'}}">

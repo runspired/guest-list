@@ -1,17 +1,17 @@
 <page>
   <div class="header-nav">
-   <hbox>
-     <box xs="12" sm="4">
-       <h1>{{#link-to 'auth.index'}}{{model.wedding.name}}{{/link-to}}</h1>
-     </box>
-     <hbox xs="12" sm="8" align="center" justify="end">
-       {{#link-to 'auth.invitations'}}Invitations{{/link-to}}
-       {{#link-to 'auth.guests'}}Guests{{/link-to}}
-       {{#link-to 'auth.admin'}}Settings{{/link-to}}
-       <span class="city-state">Signed in as <b>{{model.email}}</b></span>
-       {{#link-to 'logout'}}Signout{{/link-to}}
-     </hbox>
-   </hbox>
+    <hbox>
+      <box xs="12" sm="4">
+        <h1>{{#link-to "auth.index"}}{{model.wedding.name}}{{/link-to}}</h1>
+      </box>
+      <hbox xs="12" sm="8" align="center" justify="end">
+        {{#link-to "auth.invitations"}}Invitations{{/link-to}}
+        {{#link-to "auth.guests"}}Guests{{/link-to}}
+        {{#link-to "auth.admin"}}Settings{{/link-to}}
+        <span class="city-state">Signed in as <b>{{model.email}}</b></span>
+        {{#link-to "logout"}}Signout{{/link-to}}
+      </hbox>
+    </hbox>
   </div>
   {{outlet}}
 </page>

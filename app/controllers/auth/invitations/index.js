@@ -33,5 +33,5 @@ export default class AuthInvitationsIndexController extends Controller {
     }
 
     return this.sortedInvitations.filter(i => i.sideOfTheWedding === filter);
-  };
+  }
 }

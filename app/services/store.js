@@ -9,13 +9,6 @@ export default class StoreService extends Store {
     this.documents = Object.create(null);
   }
 
-  _push(doc) {
-    if (!doc.data) {
-      debugger;
-    }
-    return super._push(doc);
-  }
-
   pushDocument(cacheKey, document) {
     return new Promise((resolve) => {
       let collection = this.documents[cacheKey];

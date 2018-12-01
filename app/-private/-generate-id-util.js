@@ -56,6 +56,7 @@ function divide(strDividend, divisor) {
 function convertNumberToRadix(number) {
   let result = '';
 
+  // eslint-disable-next-line no-constant-condition
   while (true) {
     let div = divide(number, 64);
     result = RADIX.charAt(div.remainder) + result;

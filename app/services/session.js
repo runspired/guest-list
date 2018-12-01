@@ -1,5 +1,3 @@
-import { run } from '@ember/runloop';
-import { set } from '@ember/object';
 import { service } from '@ember-decorators/service';
 import { Promise, resolve } from 'rsvp';
 
@@ -16,7 +14,7 @@ export default class SessionService {
     let id = this.auth.currentUser.uid;
 
     return this.store.queryRecord('user', { id })
-      .catch(e => {
+      .catch(() => {
         let record = this.store.createRecord('user', { id, uid: id, wedding: null });
 
         return record.save();
@@ -53,7 +51,7 @@ export default class SessionService {
 
   authenticate(email, password) {
     let promise = this.auth.signInWithEmailAndPassword(email, password)
-      .catch(e => {
+      .catch(() => {
         return this.auth.createUserWithEmailAndPassword(email, password);
       })
       .then(() => {

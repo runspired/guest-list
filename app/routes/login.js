@@ -10,8 +10,7 @@ export default class LoginRoute extends Route {
         transition.abort();
         return this.transitionTo('auth.index');
       })
-      .catch(e => {
-        // continue to route
+      .catch(() => {
         return true;
       });
   }

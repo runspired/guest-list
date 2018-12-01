@@ -7,7 +7,7 @@ export default class AuthRoute extends Route {
 
   beforeModel(transition) {
     return this.session.reauth()
-      .catch(e => {
+      .catch(() => {
         transition.abort();
         this.transitionTo('login');
       });

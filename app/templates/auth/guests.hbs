@@ -3,38 +3,38 @@
     <h2>Guests</h2>
     <table>
       <thead>
-      <tr>
-        <th>Name</th>
-        <th>Relation</th>
-        <th>Role</th>
-        <th>Side of the Family</th>
-        <th>Invitation</th>
-        <th>Status</th>
-        <th>Address</th>
-      </tr>
+        <tr>
+          <th>Name</th>
+          <th>Relation</th>
+          <th>Role</th>
+          <th>Side of the Family</th>
+          <th>Invitation</th>
+          <th>Status</th>
+          <th>Address</th>
+        </tr>
       </thead>
       <tbody>
-      {{#each model.data as |guest|}}
-        <tr class={{if guest.isInvited '' 'not-invited'}}>
-          <td>
-            {{guest.name}}{{if guest.isChild ' (child)' ''}}
-            {{#link-to 'auth.invitations.invitation.guest' guest.invitation.id guest.id}}edit{{/link-to}}
-          </td>
-          <td>{{guest.relation}}</td>
-          <td>{{guest.role}}</td>
-          <td>{{guest.invitation.sideOfTheWedding}}</td>
-          <td>{{guest.invitation.name}}</td>
-          <td>{{if guest.isInvited 'Invited' 'Under Consideration'}}</td>
-          <td>
-            {{#if guest.invitation.address}}
-              <span class="city-state">
-              {{guest.invitation.address.city}},
-                {{guest.invitation.address.state}}
-            </span>
-            {{/if}}
-          </td>
-        </tr>
-      {{/each}}
+        {{#each model.data as |guest|}}
+          <tr class={{if guest.isInvited "" "not-invited"}}>
+            <td>
+              {{guest.name}}{{if guest.isChild " (child)" ""}}
+              {{#link-to "auth.invitations.invitation.guest" guest.invitation.id guest.id}}edit{{/link-to}}
+            </td>
+            <td>{{guest.relation}}</td>
+            <td>{{guest.role}}</td>
+            <td>{{guest.invitation.sideOfTheWedding}}</td>
+            <td>{{guest.invitation.name}}</td>
+            <td>{{if guest.isInvited "Invited" "Under Consideration"}}</td>
+            <td>
+              {{#if guest.invitation.address}}
+                <span class="city-state">
+                  {{guest.invitation.address.city}},
+                  {{guest.invitation.address.state}}
+                </span>
+              {{/if}}
+            </td>
+          </tr>
+        {{/each}}
       </tbody>
     </table>
   </box>

@@ -18,14 +18,14 @@
         <hbox xs="4 offset-8" align="center" justify="center">
           <span class="city-state">Sort By: </span>
           <PowerSelect
-              @searchEnabled={{false}}
-              @options={{arr 'name' 'id'}}
-              @selected={{listSortProperty}}
-              @onchange={{action (mut listSortProperty)}}
+            @searchEnabled={{false}}
+            @options={{arr "name" "id"}}
+            @selected={{listSortProperty}}
+            @onchange={{action (mut listSortProperty)}}
             as |v|>
             {{v}}
           </PowerSelect>
-          {{#let (combine (arr 'all') invitationActions.families) as |searchOptions|}}
+          {{#let (combine (arr "all") invitationActions.families) as |searchOptions|}}
             <span class="city-state">Filter By: </span>
             <PowerSelect
               @searchEnabled={{false}}
@@ -42,7 +42,10 @@
         {{#each filteredInvitations as |invite|}}
           <li class="invitation">
 
-            <hbox xs="12" class="invitation-header {{if invite.isInvited '' 'not-invited'}}">
+            <hbox
+              xs="12"
+              class="invitation-header {{if invite.isInvited "" "not-invited"}}"
+            >
               <box><h3>{{invite.name}}</h3></box>
               <box align="end">
                 {{!--
@@ -60,49 +63,61 @@
                 />
               </box>
               <box xs="12" sm="4">
-              <fit>
-                {{#let (meta-for invite) as |state|}}
-                  {{#if state.isEditing}}
-                    <PowerSelect
-                      @searchEnabled={{false}}
-                      @onopen={{action (mut invite.sideOfTheWedding) (if invite.sideOfTheWedding invite.sideOfTheWedding (get invitationActions.families "0"))}}
-                      @options={{invitationActions.families}}
-                      @selected={{invite.sideOfTheWedding}}
-                      @onchange={{action (mut invite.sideOfTheWedding)}}
-                        as |side|>
-                      {{side}}
-                    </PowerSelect>
+                <fit>
+                  {{#let (meta-for invite) as |state|}}
+                    {{#if state.isEditing}}
+                      <PowerSelect
+                        @searchEnabled={{false}}
+                        @onopen={{action
+                          (mut invite.sideOfTheWedding)
+                          (if invite.sideOfTheWedding
+                            invite.sideOfTheWedding
+                            (get invitationActions.families "0")
+                          )
+                        }}
+                        @options={{invitationActions.families}}
+                        @selected={{invite.sideOfTheWedding}}
+                        @onchange={{action (mut invite.sideOfTheWedding)}}
+                          as |side|>
+                        {{side}}
+                      </PowerSelect>
 
-                    <XToggle
-                      @theme="light"
-                      @size="small"
-                      @value={{invite.isInvited}}
+                      <XToggle
+                        @theme="light"
+                        @size="small"
+                        @value={{invite.isInvited}}
                         @showLabels={{true}}
-                        @onToggle={{action invitationActions.toggleInvitationStatus invite (not invite.isInvited)}}
+                        @onToggle={{action
+                          invitationActions.toggleInvitationStatus
+                          invite
+                          (not invite.isInvited)
+                        }}
                         as |toggle|>
-                      {{toggle.switch}}
+                        {{toggle.switch}}
 
-                      {{#toggle.label}}
-                        <b>{{if invite.isInvited 'Invited' 'Not Invited'}}</b>
-                      {{/toggle.label}}
-                    </XToggle>
-                    <button onclick={{actions
-                        (action invitationActions.updateInvitation invite)
-                        (action (mut state.isEditing) false)
-                      }}>Save</button>
-                  {{else}}
+                        {{#toggle.label}}
+                          <b>{{if invite.isInvited "Invited" "Not Invited"}}</b>
+                        {{/toggle.label}}
+                      </XToggle>
+                      <button
+                        onclick={{actions
+                          (action invitationActions.updateInvitation invite)
+                          (action (mut state.isEditing) false)
+                        }}
+                      >Save</button>
+                    {{else}}
                       Party: <b class="city-state">{{invite.sideOfTheWedding}}</b><br>
-                      Status: <b>{{if invite.isInvited 'Invited' 'Not Invited'}}</b><br>
-                    <button {{action (mut state.isEditing) true}}>Edit</button>
-                  {{/if}}
-                {{/let}}
-              </fit>
+                      Status: <b>{{if invite.isInvited "Invited" "Not Invited"}}</b><br>
+                      <button {{action (mut state.isEditing) true}}>Edit</button>
+                    {{/if}}
+                  {{/let}}
+                </fit>
               </box>
               <box xs="12" sm="4">
                 <h6>Guests on this Invitation</h6>
                 <ul class="invitation-list tier-2">
                   {{#each invite.guests as |guest|}}
-                    <li>{{guest.name}}{{if guest.isChild ' (child)' ''}}</li>
+                    <li>{{guest.name}}{{if guest.isChild " (child)" ""}}</li>
                   {{else}}
                     No guests for this invite yet.
                   {{/each}}

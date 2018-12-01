@@ -1,17 +1,18 @@
 {{#if isEditing}}
-  <form onSubmit={{action "saveAddress" address}}>
+  <form onsubmit={{action "saveAddress" address}}>
     <label>Street</label>{{input value=address.street}}<br>
     <label>Street</label>{{input value=address.street2}}<br>
     <label>Zipcode</label><input value={{address.zipcode}} oninput={{action "updateZipcode"}}>
     <br>
-      {{#if allowEditingCityState}}
-        <span class="city-state">{{input value=address.city}}, {{input value=address.state}}</span>
-      {{else}}
-        <span class="city-state">{{address.city}}, {{address.state}}</span>
-        <button {{action (mut allowEditingCityState) true}}>Edit</button>
-      {{/if}}
+    {{#if allowEditingCityState}}
+      <span class="city-state">{{input value=address.city}}, {{input value=address.state}}</span>
+    {{else}}
+      <span class="city-state">{{address.city}}, {{address.state}}</span>
+      <button {{action (mut allowEditingCityState) true}}>Edit</button>
+    {{/if}}
     <br>
-    <button type="submit"
+    <button
+      type="submit"
       {{action
         (actions
           (action "saveAddress" address)

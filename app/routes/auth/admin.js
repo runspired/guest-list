@@ -1,6 +1,5 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember-decorators/service';
-import { run } from '@ember/runloop';
 
 export default class AuthAdminRoute extends Route {
   @service store;
@@ -21,7 +20,7 @@ export default class AuthAdminRoute extends Route {
                 this.session.set('wedding', wedding);
                 return wedding.save()
                   .then(() => user.save())
-                  .then(_ => wedding);
+                  .then(() => wedding);
               }
 
               return wedding;
@@ -36,7 +35,7 @@ export default class AuthAdminRoute extends Route {
           user.set('wedding', wedding);
           return wedding.save()
             .then(() => user.save())
-            .then(_ => wedding);
+            .then(() => wedding);
         }
 
         return wedding;

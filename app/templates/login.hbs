@@ -12,7 +12,7 @@
         <label for="login-password">Password</label>
         {{input
           id="login-password"
-          type=(if showPassword 'text' 'password')
+          type=(if showPassword "text" "password")
           value=password
         }}
         <button {{action (mut showPassword) (not showPassword)}}>Show Password?</button>
@@ -20,7 +20,7 @@
         <button type="submit" {{action "login" email password}}>Go</button>
       </form>
       {{#if error}}
-        <box style="background: red">
+        <box style="background: red;">
           <span>{{error.message}}</span>
         </box>
       {{/if}}

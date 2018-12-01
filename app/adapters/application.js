@@ -122,8 +122,6 @@ export default class FirebaseAdapter {
         (doc) => {
           if (doc && doc.data) {
             this.store.push(doc);
-          } else {
-            debugger;
           }
         })
     });
@@ -210,7 +208,6 @@ function  _getAndSubscribe(ref, cb, update) {
       }
     });
   }, function(error) {
-    // TODO what now?
-    debugger;
+    throw error;
   });
 }

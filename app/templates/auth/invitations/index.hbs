@@ -71,9 +71,11 @@
                     <button {{action (mut state.isEditing) true}}>Edit</button>
                   {{/if}}
                   </div>
-                  {{!--
-                  <button {{action invitationActions.deleteInvitation invite}}>delete</button>
-                  --}}
+                  <div>
+                    {{#if (eq invite.guests.length 0)}}
+                    <button {{action invitationActions.deleteInvitation invite}}>delete</button>
+                    {{/if}}
+                  </div>
                 </box>
               </hbox>
 

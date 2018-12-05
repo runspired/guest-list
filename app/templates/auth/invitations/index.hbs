@@ -40,31 +40,53 @@
       </div>
       <ul class="invitation-list tier-1">
         {{#each filteredInvitations as |invite|}}
-          <li class="invitation">
+          {{#let (meta-for invite) as |state|}}
+            <li class="invitation">
 
-            <hbox
-              xs="12"
-              class="invitation-header {{if invite.isInvited "" "not-invited"}}"
-            >
-              <box><h3>{{invite.name}}</h3></box>
-              <box align="end">
-                {{!--
-                <button {{action invitationActions.deleteInvitation invite}}>delete</button>
-                --}}
-              </box>
-            </hbox>
+              <hbox
+                xs="12"
+                class="invitation-header {{if invite.isInvited "" "not-invited"}}"
+              >
+                <box>
+                  <h3>{{#if state.isEditing}}{{input value=invite.name}}{{else}}{{invite.name}}{{/if}}</h3>
+                </box>
+                <box align="end">
+                  <div>
+                    {{#if state.isEditing}}
+                      {{#if invite.hasDirtyAttributes}}
 
-            <hbox>
-              <box xs="12" sm="4">
-                <ManageAddress
-                  @address={{invite.address.content}}
-                  @onUpdate={{action invitationActions.updateAddress invite}}
-                  @allowEditing={{true}}
-                />
-              </box>
-              <box xs="12" sm="4">
-                <fit>
-                  {{#let (meta-for invite) as |state|}}
+                    <button
+                      onclick={{actions
+                        (action invitationActions.updateInvitation invite)
+                        (action (mut state.isEditing) false)
+                      }}
+                    >Save</button>
+                      {{else}}
+
+                    <button
+                      onclick={{action (mut state.isEditing) false}}
+                    >Cancel</button>
+                      {{/if}}
+                  {{else}}
+                    <button {{action (mut state.isEditing) true}}>Edit</button>
+                  {{/if}}
+                  </div>
+                  {{!--
+                  <button {{action invitationActions.deleteInvitation invite}}>delete</button>
+                  --}}
+                </box>
+              </hbox>
+
+              <hbox>
+                <box xs="12" sm="4">
+                  <ManageAddress
+                    @address={{invite.address.content}}
+                    @onUpdate={{action invitationActions.updateAddress invite}}
+                    @allowEditing={{true}}
+                  />
+                </box>
+                <box xs="12" sm="4">
+                  <fit>
                     {{#if state.isEditing}}
                       <PowerSelect
                         @searchEnabled={{false}}
@@ -99,36 +121,33 @@
                           <b>{{if invite.isInvited "Invited" "Not Invited"}}</b>
                         {{/toggle.label}}
                       </XToggle>
-                      <button
-                        onclick={{actions
-                          (action invitationActions.updateInvitation invite)
-                          (action (mut state.isEditing) false)
-                        }}
-                      >Save</button>
                     {{else}}
                       Party: <b class="city-state">{{invite.sideOfTheWedding}}</b><br>
                       Status: <b>{{if invite.isInvited "Invited" "Not Invited"}}</b><br>
-                      <button {{action (mut state.isEditing) true}}>Edit</button>
                     {{/if}}
-                  {{/let}}
-                </fit>
-              </box>
-              <box xs="12" sm="4">
-                <h6>Guests on this Invitation</h6>
-                <ul class="invitation-list tier-2">
-                  {{#each invite.guests as |guest|}}
-                    <li>{{guest.name}}{{if guest.isChild " (child)" ""}}</li>
-                  {{else}}
-                    No guests for this invite yet.
-                  {{/each}}
-                  <li>
-                    <QuickAdd @onSubmit={{action invitationActions.addGuest invite}} />
-                  </li>
-                </ul>
-              </box>
-            </hbox>
-
-          </li>
+                  </fit>
+                </box>
+                <box xs="12" sm="4">
+                  <h6>Guests on this Invitation</h6>
+                  <ul class="invitation-list tier-2">
+                    {{#each invite.guests as |guest|}}
+                      <li class={{if guest.isInvited "" "not-invited"}}>
+                        {{#link-to "auth.invitations.invitation.guest" invite.id guest.id}}
+                          {{guest.name}}
+                        {{/link-to}}
+                        {{if guest.isChild " (child)" ""}}
+                      </li>
+                    {{else}}
+                      No guests for this invite yet.
+                    {{/each}}
+                    <li>
+                      <QuickAdd @onSubmit={{action invitationActions.addGuest invite}} />
+                    </li>
+                  </ul>
+                </box>
+              </hbox>
+            </li>
+          {{/let}}
         {{else}}
           No Invites for this group yet.
         {{/each}}

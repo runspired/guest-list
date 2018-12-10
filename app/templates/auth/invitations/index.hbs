@@ -25,7 +25,7 @@
             as |v|>
             {{v}}
           </PowerSelect>
-          {{#let (combine (arr "all") invitationActions.families) as |searchOptions|}}
+          {{#let (combine (arr "all" "") invitationActions.families) as |searchOptions|}}
             <span class="city-state">Filter By: </span>
             <PowerSelect
               @searchEnabled={{false}}

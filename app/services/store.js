@@ -1,7 +1,7 @@
 import Store from 'ember-data/store';
 import { Promise, resolve } from 'rsvp';
-import { run } from '@ember/runloop';
 import { set } from '@ember/object';
+import { run } from '@ember/runloop';
 
 export default class StoreService extends Store {
   constructor() {
@@ -11,24 +11,26 @@ export default class StoreService extends Store {
 
   pushDocument(cacheKey, document) {
     return new Promise((resolve) => {
-      let collection = this.documents[cacheKey];
-      let records;
+      run.join(() => {
+        let collection = this.documents[cacheKey];
+        let records;
+  
+        if (!document.errors && document.data) {
+          records = this.push(document);
+        }
+  
+        if (!collection) {
+          collection = {};
+          this.documents[cacheKey] = collection;
+        }
+  
+        set(collection, 'errors', document.errors || null);
+        set(collection, 'meta', document.meta || null);
+        set(collection, 'links', document.links || null);
+        set(collection, 'data', records);
 
-      if (!document.errors && document.data) {
-        records = run(() => this.push(document));
-      }
-
-      if (!collection) {
-        collection = {};
-        this.documents[cacheKey] = collection;
-      }
-
-      set(collection, 'errors', document.errors || null);
-      set(collection, 'meta', document.meta || null);
-      set(collection, 'links', document.links || null);
-      set(collection, 'data', records);
-
-      resolve(collection);
+        resolve(collection);
+      });
     });
   }
 

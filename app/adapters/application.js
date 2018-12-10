@@ -189,8 +189,7 @@ function  _getAndSubscribe(ref, cb, update) {
 
     if (snapshot.docs) {
       let promises = snapshot.docs.map(docRef => {
-        return docRef.ref.get({ source: 'default' })
-          .then(ref => ref.data());
+        return docRef.data();
       });
       promise = all(promises);
     } else {

@@ -28,6 +28,11 @@ module.exports = function(/* environment, appConfig */) {
         src: "/guest-list/images/icon-192.png",
         sizes: "192x192",
         type: "image/png"
+      },
+      {
+        src: "/guest-list/images/icon-2000-transparent.png",
+        sizes: "2000x2000",
+        type: "image/png"
       }
     ]
   };

@@ -54,8 +54,8 @@ module.exports = function(environment) {
   }
 
   if (environment === 'production') {
-    // ENV.rootURL = '/guest-list';
-    // ENV.locationType = 'hash';
+    ENV.rootURL = '/guest-list';
+    ENV.locationType = 'hash';
   }
 
   return ENV;

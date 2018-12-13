@@ -4,6 +4,7 @@ import { all } from 'rsvp';
 
 export default class InvitationsRoute extends Route {
   @service store;
+  @service stats;
 
   model() {
     let { store } = this;
@@ -13,7 +14,16 @@ export default class InvitationsRoute extends Route {
         return all([
           store.fetchCollection('guest'),
           store.fetchCollection('address')
-        ]).then(() => collection);
+        ]).then((results) => {
+          this.stats.set('invitations', collection);
+          this.stats.set('guests', results[0]);
+          return collection;
+        });
       });
+  }
+
+  setupController(controller, model) {
+    controller.set('model', model);
+    controller.set('stats', this.stats);
   }
 }

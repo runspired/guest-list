@@ -1,7 +1,7 @@
 import Controller from '@ember/controller';
 import { computed } from '@ember-decorators/object';
 
-export default class AuthInvitationsIndexController extends Controller {
+export default class AuthInvitationsController extends Controller {
   constructor() {
     super(...arguments);
     this.filterSideOfTheWedding = 'all';

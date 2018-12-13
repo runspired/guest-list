@@ -1,1 +1,105 @@
-{{outlet}}
+<hbox>
+  <box xs="12" class="invitations-page">
+    <h2>Invitations</h2>
+    <span class="city-state">
+      Invitations {{stats.guestCounts.invitationsToSend}} |
+      Guests {{stats.guestCounts.guestsToInvite}} |
+      Guests Missing from Invitations {{stats.guestCounts.guestsNotOnInvitations}}
+      <br>
+      Potential Invitations {{stats.guestCounts.invitationsToHold}} |
+      Potential Guests {{stats.guestCounts.guestsToHold}}
+      <br>
+      {{stats.session.wedding.party1}} guests {{stats.guestCounts.party1Guests}} |
+      {{stats.session.wedding.party2}} guests {{stats.guestCounts.party2Guests}} |
+      Guests Missing Party: {{stats.guestCounts.guestsWithoutParty}}
+    </span>
+    <ManageInvitation as |invitationActions|>
+      <hbox>
+        <hbox xs="4 offset-8" align="center" justify="center">
+          <span class="city-state">Sort By: </span>
+          <PowerSelect
+            @searchEnabled={{false}}
+            @options={{arr "name" "id"}}
+            @selected={{listSortProperty}}
+            @onchange={{action (mut listSortProperty)}}
+            as |v|>
+            {{v}}
+          </PowerSelect>
+          {{#let (combine (arr "all" "") invitationActions.families) as |searchOptions|}}
+            <span class="city-state">Filter By: </span>
+            <PowerSelect
+              @searchEnabled={{false}}
+              @options={{searchOptions}}
+              @selected={{filterSideOfTheWedding}}
+              @onchange={{action (mut filterSideOfTheWedding)}}
+              as |side|>
+              {{side}}
+            </PowerSelect>
+          {{/let}}
+        </hbox>
+        <box xs="hidden" sm="5 visible" style="background: #f0f0f0; border-radius: 3px; border: 1px solid #e0e0e0;">
+          <div>
+            {{outlet}}
+          </div>
+          <div style="padding: 1em; background: orange; margin-top: 2rem;">
+            <hr>
+            <h4>Create Invitation</h4>
+            <QuickAdd @onSubmit={{action invitationActions.addInvitation}} @placeholder="enter a title.." />
+            <hr>
+          </div>
+        </box>
+        <box xs="12" sm="7">
+          <ul class="invitation-list tier-1">
+            {{#each filteredInvitations as |invite|}}
+              {{#let (meta-for invite) as |state|}}
+                <li class="invitation">
+                  <hbox
+                    xs="12"
+                    class="invitation-header {{if invite.isInvited "" "not-invited"}}"
+                  >
+                    <box>
+                      <h3>{{#link-to 'auth.invitations.invitation' invite}}{{invite.name}}{{/link-to}}</h3>
+                    </box>
+                  </hbox>
+
+                  <hbox>
+                    <box xs="12" sm="4">
+                      <ManageAddress
+                        @address={{invite.address.content}}
+                        @onUpdate={{action invitationActions.updateAddress invite}}
+                        @allowEditing={{false}}
+                      />
+                    </box>
+                    <box xs="12" sm="4">
+                      <fit>
+                        Party: <b class="city-state">{{invite.sideOfTheWedding}}</b><br>
+                        Status: <b>{{if invite.isInvited "Invited" "Not Invited"}}</b><br>
+                      </fit>
+                    </box>
+                    <box xs="12" sm="4">
+                      <h6>Guests on this Invitation</h6>
+                      <ul class="invitation-list tier-2">
+                        {{#each invite.guests as |guest|}}
+                          <li class={{if guest.isInvited "" "not-invited"}}>
+                            {{#link-to "auth.invitations.invitation.guest" invite.id guest.id}}
+                              {{guest.name}}
+                            {{/link-to}}
+                            {{if guest.isChild " (child)" ""}}
+                          </li>
+                        {{else}}
+                          No guests for this invite yet.
+                        {{/each}}
+                      </ul>
+                    </box>
+                  </hbox>
+                </li>
+              {{/let}}
+            {{else}}
+              No Invites for this group yet.
+            {{/each}}
+          </ul>
+        </box>
+      </hbox>
+    </ManageInvitation>
+  </box>
+</hbox>

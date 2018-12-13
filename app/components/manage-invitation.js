@@ -1,6 +1,8 @@
 import Component from '@ember/component';
 import { action } from '@ember-decorators/object';
 import { service } from '@ember-decorators/service';
+import { metaFor } from '../helpers/meta-for';
+import { set } from '@ember/object';
 
 export default class ManageInvitationComponent extends Component {
   constructor() {
@@ -13,6 +15,7 @@ export default class ManageInvitationComponent extends Component {
 
   @service store;
   @service session;
+  @service router;
 
   @action
   toggleInvitationStatus(invitation, status) {
@@ -40,6 +43,7 @@ export default class ManageInvitationComponent extends Component {
       invitation.save({ adapterOptions: { cascadeDelete: ['guests'] }})
         .then(() => {
           invitation.unloadRecord();
+          this.router.transitionTo('auth.invitations');
         });
     }
   }
@@ -51,7 +55,11 @@ export default class ManageInvitationComponent extends Component {
         group: null
       });
 
-    invitation.save();
+    invitation.save().then(() => {
+      let state = metaFor([invitation]);
+      set(state, 'isEditing', true);
+      this.router.transitionTo('auth.invitations.invitation', invitation);
+    })
   }
 
   @action

@@ -97,10 +97,12 @@
               </tr>
             </tbody>
           </table>
-          <button
-            type="submit"
-            onclick={{action (action actions.updateGuest model.guest)}}
-          >Save</button>
+          {{#if model.guest.hasDirtyAttributes}}
+            <button
+              type="submit"
+              onclick={{action (action actions.updateGuest model.guest)}}
+            >Save</button>
+          {{/if}}
         </form>
       </ManageGuest>
   </box>

@@ -8,8 +8,11 @@ module.exports = function(defaults) {
     vendorFiles: {
       'jquery.js': null
     },
+    fingerprint: {
+      exclude: ['sw.js']
+    },
     'ember-service-worker': {
-      registrationStrategy: 'inline'
+      registrationStrategy: 'async'
     }
   });
 

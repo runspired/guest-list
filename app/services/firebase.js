@@ -1,4 +1,6 @@
-import firebase from 'firebase';
+import Firebase from 'firebase/app';
+import 'firebase/firestore';
+import 'firebase/auth';
 import { getOwner } from '@ember/application';
 
 export default class FirebaseService {
@@ -24,17 +26,23 @@ export default class FirebaseService {
    let app;
 
    try {
-     app = firebase.app();
+     app = Firebase.app();
    } catch (e) {
-     app = firebase.initializeApp(this.config);
+     app = Firebase.initializeApp(this.config);
    }
 
    this.app = app;
-   this.db = app.firestore();
+   let db = this.db = app.firestore();
 
-   this.db.settings({
+   db.settings({
      timestampsInSnapshots: true
    });
+
+   this.readyPromise = db.enablePersistence({ experimentalTabSynchronization: true })
+     .catch(function(err) {
+        console.log('Firestore failed to enable offline support');
+        console.error(err);
+      });
  }
 
  static create(createArgs) {

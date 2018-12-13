@@ -6,6 +6,14 @@ import {
   getInverseRelationship
 } from '../-private/-ember-data-utils';
 
+let _req = 0;
+const REQUEST_COUNT = {
+  increment(amount) {
+    _req += amount;
+    console.log(`Total Reads: ${_req}`);
+  }
+}
+
 export default class FirebaseAdapter {
   @service() firebase;
   @service() store;
@@ -185,27 +193,31 @@ function _getRef(db, type, id) {
 function  _getAndSubscribe(ref, cb, update) {
   let isFirst = true;
   ref.onSnapshot(function(snapshot) {
-    let promise;
+    let data;
 
     if (snapshot.docs) {
-      let promises = snapshot.docs.map(docRef => {
+      data = snapshot.docs.map(docRef => {
         return docRef.data();
       });
-      promise = all(promises);
     } else {
-      promise = resolve(snapshot.data());
+      data = snapshot.data();
     }
 
-    promise.then(data => {
-      let document = { data };
+    let document = { data };
 
-      if (isFirst === true) {
-        isFirst = false;
-        cb(document);
-      } else {
-        update(document);
+    if (isFirst === true) {
+      isFirst = false;
+      cb(document);
+      if (!snapshot.metadata.fromCache) {
+        REQUEST_COUNT.increment(snapshot.docChanges().length);
       }
-    });
+    } else {
+      update(document);
+      if (!snapshot.metadata.fromCache && !snapshot.metadata.hasPendingWrites) {
+        REQUEST_COUNT.increment(snapshot.docChanges().length);
+      }
+    }
+
   }, function(error) {
     throw error;
   });

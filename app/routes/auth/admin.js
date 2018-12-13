@@ -1,5 +1,6 @@
 import Route from '@ember/routing/route';
 import { service } from '@ember-decorators/service';
+import { set } from '@ember/object';
 
 export default class AuthAdminRoute extends Route {
   @service store;
@@ -17,7 +18,7 @@ export default class AuthAdminRoute extends Route {
 
               if (wedding) {
                 user.set('wedding', wedding);
-                this.session.set('wedding', wedding);
+                set(this.session, 'wedding', wedding);
                 return wedding.save()
                   .then(() => user.save())
                   .then(() => wedding);

@@ -13,20 +13,25 @@ export default class SessionService {
   getUser() {
     let id = this.auth.currentUser.uid;
 
-    return this.store.queryRecord('user', { id })
-      .catch(() => {
-        let record = this.store.createRecord('user', { id, uid: id, wedding: null });
+    return this.firebase.readyPromise.then(() => {
+      return this.store.queryRecord('user', { id })
+        .catch((e) => {
+          let record = this.store.createRecord('user', { id, uid: id, wedding: null });
 
-        return record.save();
-      })
-      .then(user => {
-        this.user = user;
-        return user.get('wedding');
-      })
-      .then(wedding => {
-        this.wedding = wedding;
-        return this.user;
-      });
+          return record.save();
+        })
+        .then(user => {
+          this.user = user;
+          return user.get('wedding');
+        })
+        .then(wedding => {
+          this.wedding = wedding;
+          return this.user;
+        })
+        .catch(e => {
+          throw e;
+        });
+    });
   }
 
   reauth() {

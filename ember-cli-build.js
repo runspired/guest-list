@@ -7,6 +7,9 @@ module.exports = function(defaults) {
     // Add options here
     vendorFiles: {
       'jquery.js': null
+    },
+    'ember-service-worker': {
+      registrationStrategy: 'inline'
     }
   });
 

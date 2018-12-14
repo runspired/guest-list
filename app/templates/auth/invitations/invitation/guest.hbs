@@ -1,9 +1,10 @@
-<h2>{{model.guest.name}}</h2>
+{{#liquid-bind model use="toDown" as |currentModel|}}
+<h2>{{currentModel.guest.name}}</h2>
 
 <hbox>
   <box xs="12">
       <ManageGuest as |actions|>
-        <form onsubmit={{action (action actions.updateGuest model.guest)}}>
+        <form onsubmit={{action (action actions.updateGuest currentModel.guest)}}>
           <table style="width: 100%">
             <thead>
               <tr>
@@ -16,8 +17,8 @@
                 <td>
                   <PowerSelect
                     @options={{actions.relations}}
-                    @selected={{model.guest.relation}}
-                    @onchange={{action (mut model.guest.relation)}}
+                    @selected={{currentModel.guest.relation}}
+                    @onchange={{action (mut currentModel.guest.relation)}}
                     as |relation|
                   >{{relation}}
                   </PowerSelect>
@@ -28,18 +29,18 @@
                 <td>
                   <PowerSelect
                     @options={{actions.roles}}
-                    @selected={{model.guest.role}}
-                    @onchange={{action (mut model.guest.role)}}
+                    @selected={{currentModel.guest.role}}
+                    @onchange={{action (mut currentModel.guest.role)}}
                       as |relation|
                   >{{relation}}
                   </PowerSelect>
                 </td>
               </tr>
               <tr>
-                <td>Email</td><td>{{input value=model.guest.email}}</td>
+                <td>Email</td><td>{{input value=currentModel.guest.email}}</td>
               </tr>
               <tr>
-                <td>Cell #</td><td>{{input value=model.guest.mobilePhone}}</td>
+                <td>Cell #</td><td>{{input value=currentModel.guest.mobilePhone}}</td>
               </tr>
               <tr>
                 <td>is invited?</td>
@@ -47,12 +48,12 @@
                   <XToggle
                     @theme="light"
                     @size="small"
-                    @value={{model.guest.isInvited}}
+                    @value={{currentModel.guest.isInvited}}
                     @showLabels={{true}}
-                    @onToggle={{action (mut model.guest.isInvited) (not model.guest.isInvited)}}
+                    @onToggle={{action (mut currentModel.guest.isInvited) (not currentModel.guest.isInvited)}}
                       as |toggle|>
                     {{#toggle.label}}
-                      <b>{{if model.guest.isInvited "Yes" "No"}}</b>
+                      <b>{{if currentModel.guest.isInvited "Yes" "No"}}</b>
                     {{/toggle.label}}
 
                     {{toggle.switch}}
@@ -65,12 +66,12 @@
                   <XToggle
                     @theme="light"
                     @size="small"
-                    @value={{model.guest.isChild}}
+                    @value={{currentModel.guest.isChild}}
                     @showLabels={{true}}
-                    @onToggle={{action (mut model.guest.isChild) (not model.guest.isChild)}}
+                    @onToggle={{action (mut currentModel.guest.isChild) (not currentModel.guest.isChild)}}
                       as |toggle|>
                     {{#toggle.label}}
-                      <b>{{if model.guest.isChild "Yes" "No"}}</b>
+                      <b>{{if currentModel.guest.isChild "Yes" "No"}}</b>
                     {{/toggle.label}}
 
                     {{toggle.switch}}
@@ -83,12 +84,12 @@
                   <XToggle
                     @theme="light"
                     @size="small"
-                    @value={{model.guest.hasPlusOne}}
+                    @value={{currentModel.guest.hasPlusOne}}
                     @showLabels={{true}}
-                    @onToggle={{action (mut model.guest.hasPlusOne) (not model.guest.hasPlusOne)}}
+                    @onToggle={{action (mut currentModel.guest.hasPlusOne) (not currentModel.guest.hasPlusOne)}}
                       as |toggle|>
                     {{#toggle.label}}
-                      <b>{{if model.guest.hasPlusOne "Yes" "No"}}</b>
+                      <b>{{if currentModel.guest.hasPlusOne "Yes" "No"}}</b>
                     {{/toggle.label}}
 
                     {{toggle.switch}}
@@ -97,13 +98,14 @@
               </tr>
             </tbody>
           </table>
-          {{#if model.guest.hasDirtyAttributes}}
+          {{#if currentModel.guest.hasDirtyAttributes}}
             <button
               type="submit"
-              onclick={{action (action actions.updateGuest model.guest)}}
+              onclick={{action (action actions.updateGuest currentModel.guest)}}
             >Save</button>
           {{/if}}
         </form>
       </ManageGuest>
   </box>
 </hbox>
+{{/liquid-bind}}

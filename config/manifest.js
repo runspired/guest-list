@@ -9,7 +9,7 @@ module.exports = function(/* environment, appConfig */) {
     name: "guest-list",
     short_name: "guest-list",
     description: "",
-    start_url: "/",
+    start_url: "/guest-list/",
     display: "standalone",
     background_color: "#fff",
     theme_color: "#fff",

@@ -17,6 +17,8 @@ export default class InvitationsRoute extends Route {
         ]).then((results) => {
           this.stats.set('invitations', collection);
           this.stats.set('guests', results[0]);
+          this.stats.set('addresses', results[1]);
+
           return collection;
         });
       });

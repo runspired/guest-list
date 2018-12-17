@@ -1,9 +1,56 @@
 import Service from '@ember/service';
 import { computed } from '@ember-decorators/object';
 import { service } from '@ember-decorators/service';
+import { capitalize } from '@ember/string';
+
+function hasFullAddress(address) {
+  return typeof address.street === 'string' && address.street.length > 2
+   && typeof address.zipcode === 'string' && address.zipcode.length > 4;
+}
+
+function capitalizeWords(str) {
+  return str.split(' ').map(capitalize).join(' ');
+}
 
 export default class StatsService extends Service {
   @service session;
+  @service store;
+
+  @computed('invitations.data.@each.{isInvited,name,address}', 'addresses.data.@each.{street,street2,city,state,zipcode}')
+  get csvData() {
+    let { invitations, addresses, store } = this;
+    let data = [
+      ['Name on Envelope', 'Address 1', 'Address 2', 'City', 'State', 'Zip', 'Country'],
+    ];
+    let missingAddresses = [];
+    invitations.data.forEach(invite => {
+        if (invite.isInvited) {
+          let id = invite.belongsTo('address').id();
+
+          if (!id) {
+            missingAddresses.push(invite);
+            return;
+          }
+
+          let address = store.peekRecord('address', id);
+
+          if (address !== null && hasFullAddress(address)) {
+            let country = address.state.toLowerCase() === 'uk' ? 'UK' : 'USA';
+            let state = country === 'USA' ? address.state : '';
+
+            let row = [capitalizeWords(invite.name), capitalizeWords(address.street), capitalizeWords(address.street2), capitalizeWords(address.city), capitalizeWords(state), address.zipcode, country];
+
+            data.push(row);
+          } else {
+            missingAddresses.push(invite);
+          }
+        }
+    });
+
+    this.missingAddresses = missingAddresses;
+
+    return data;
+  }
 
   @computed('guests.data.@each.{isInvited,invitation}', 'invitations.data.@each.{isInvited,sideOfTheWedding}')
   get guestCounts() {

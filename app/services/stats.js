@@ -93,6 +93,9 @@ export default class StatsService extends Service {
       guestsToInvite: 0,
       guestsToHold: 0,
       guestsNotOnInvitations: 0,
+      party1Invites: 0,
+      party2Invites: 0,
+      invitationsWithoutParty: 0,
       party1Guests: 0,
       party2Guests: 0,
       guestsWithoutParty: 0,
@@ -106,9 +109,18 @@ export default class StatsService extends Service {
       invite.isInvited
         ? counts.invitationsToSend++
         : counts.invitationsToHold++;
-      invite.isSecondWave
-        ? counts.secondWaveInvitations++
-        : counts.firstWaveInvitations++;
+      if (invite.isInvited) {
+        if (invite.sideOfTheWedding === party1) {
+          counts.party1Invites++;
+        } else if (invite.sideOfTheWedding === party2) {
+          counts.party2Invites++;
+        } else {
+          counts.invitationsWithoutParty++;
+        }
+        invite.isSecondWave
+          ? counts.secondWaveInvitations++
+          : counts.firstWaveInvitations++;
+      }
     });
 
     guests.data.forEach(guest => {

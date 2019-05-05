@@ -9,12 +9,15 @@
       Second Wave Invitations/guests
       {{stats.guestCounts.secondWaveInvitations}}/{{stats.guestCounts.secondWaveGuests}}<br>
       <br>
-      Potential Invitations {{stats.guestCounts.invitationsToHold}} |
-      Potential Guests {{stats.guestCounts.guestsToHold}}
+      {{stats.session.wedding.party1}} Invitations/guests
+      {{stats.guestCounts.party1Invites}}/{{stats.guestCounts.party1Guests}}<br>
+      {{stats.session.wedding.party2}} Invitations/guests
+      {{stats.guestCounts.party2Invites}}/{{stats.guestCounts.party2Guests}}<br>
+      Missing Party Invitations/guests
+      {{stats.guestCounts.invitationsWithoutParty}}/{{stats.guestCounts.guestsWithoutParty}}<br>
       <br>
-      {{stats.session.wedding.party1}} guests {{stats.guestCounts.party1Guests}} |
-      {{stats.session.wedding.party2}} guests {{stats.guestCounts.party2Guests}} |
-      Guests Missing Party: {{stats.guestCounts.guestsWithoutParty}}
+      Uninvited Invitations/Guests {{stats.guestCounts.invitationsToHold}}/{{stats.guestCounts.guestsToHold}}
+      <br>
     </span>
     <ManageInvitation as |invitationActions|>
       <hbox>

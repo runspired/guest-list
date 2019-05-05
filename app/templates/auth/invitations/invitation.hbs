@@ -1,112 +1,108 @@
 {{#liquid-bind model use="toLeft" as |currentModel|}}
-  <ManageInvitation as |invitationActions|>
-    {{#let (meta-for currentModel) as |state|}}
-      <h3 class="invitation-header {{if currentModel.isInvited "" "not-invited"}}">
-        {{#if state.isEditing}}
-          {{input
+<ManageInvitation as |invitationActions|>
+  {{#let (meta-for currentModel) as |state|}}
+  <h3
+    class="invitation-header {{if currentModel.isInvited (if currentModel.isSecondWave "second-wave" "") "not-invited"}}">
+    {{#if state.isEditing}}
+    {{input
             value=currentModel.name
             placeholder="enter a title for this invitation.."
           }}
-        {{else}}
-          {{currentModel.name}}
-          <button {{action (mut state.isEditing) true}}>Edit</button>
-        {{/if}}
-      </h3>
+    {{else}}
+    {{currentModel.name}}
+    <button {{action (mut state.isEditing) true}}>Edit</button>
+    {{/if}}
+  </h3>
 
-      <hbox>
-        <box xs="12" sm="4">
-          <ManageAddress
-            @address={{currentModel.address.content}}
-            @onUpdate={{action invitationActions.updateAddress currentModel}}
-            @allowEditing={{state.isEditing}}
-          />
-        </box>
-        <box xs="12" sm="4">
-          <fit>
-            {{#if state.isEditing}}
-              <PowerSelect
-                @searchEnabled={{false}}
-                @onopen={{action
+  <hbox>
+    <box xs="12" sm="4">
+      <ManageAddress @address={{currentModel.address.content}}
+        @onUpdate={{action invitationActions.updateAddress currentModel}} @allowEditing={{state.isEditing}} />
+    </box>
+    <box xs="12" sm="4">
+      <fit>
+        {{#if state.isEditing}}
+        <PowerSelect @searchEnabled={{false}} @onopen={{action
                   (mut currentModel.sideOfTheWedding)
                   (if currentModel.sideOfTheWedding
                     currentModel.sideOfTheWedding
                     (get invitationActions.families "0")
                     )
-                }}
-                @options={{invitationActions.families}}
-                @selected={{currentModel.sideOfTheWedding}}
-                @onchange={{action (mut currentModel.sideOfTheWedding)}}
-                as |side|>
-                {{side}}
-              </PowerSelect>
+                }} @options={{invitationActions.families}} @selected={{currentModel.sideOfTheWedding}}
+          @onchange={{action (mut currentModel.sideOfTheWedding)}} as |side|>
+          {{side}}
+        </PowerSelect>
 
-              <XToggle
-                @theme="light"
-                @size="small"
-                @value={{currentModel.isInvited}}
-                @showLabels={{true}}
-                @onToggle={{action
+        <XToggle @theme="light" @size="small" @value={{currentModel.isInvited}} @showLabels={{true}} @onToggle={{action
                   invitationActions.toggleInvitationStatus
                   currentModel
                   (not currentModel.isInvited)
-                }}
-                as |toggle|>
-                {{toggle.switch}}
+                }} as |toggle|>
+          {{toggle.switch}}
 
-                {{#toggle.label}}
-                  <b>{{if currentModel.isInvited "Invited" "Not Invited"}}</b>
-                {{/toggle.label}}
-              </XToggle>
-            {{else}}
-              Party: <b class="city-state">{{currentModel.sideOfTheWedding}}</b><br>
-              Status: <b>{{if currentModel.isInvited "Invited" "Not Invited"}}</b><br>
-            {{/if}}
-          </fit>
-        </box>
+          {{#toggle.label}}
+          <b>{{if currentModel.isInvited "Invited" "Not Invited"}}</b>
+          {{/toggle.label}}
+        </XToggle>
 
-        <box xs="12" sm="4">
-          <h6>Guests on this Invitation</h6>
-          <ul class="invitation-list tier-2">
-            {{#each currentModel.guests as |guest|}}
-              <li class={{if guest.isInvited "" "not-invited"}}>
-                {{#link-to "auth.invitations.invitation.guest" currentModel.id guest.id}}
-                  {{guest.name}}
-                {{/link-to}}
-                {{if guest.isChild " (child)" ""}}
-              </li>
-            {{else}}
-              No guests for this invite yet.
-            {{/each}}
-            <li>
-              <QuickAdd @onSubmit={{action invitationActions.addGuest currentModel}} />
-            </li>
-          </ul>
-        </box>
-      </hbox>
+        {{#if currentModel.isInvited}}
+        <XToggle @theme="light" @size="small" @value={{currentModel.isSecondWave}} @showLabels={{true}} @onToggle={{action
+                  invitationActions.toggleSecondWaveStatus
+                  currentModel
+                  (not currentModel.isSecondWave)
+                }} as |toggle|>
+          {{toggle.switch}}
 
-      {{#if state.isEditing}}
-        {{#if currentModel.hasDirtyAttributes}}
-          <button
-            onclick={{actions
+          {{#toggle.label}}
+          <b>{{if currentModel.isSecondWave "SecondWave" "First Wave"}}</b>
+          {{/toggle.label}}
+        </XToggle>
+        {{/if}}
+        {{else}}
+        Party: <b class="city-state">{{currentModel.sideOfTheWedding}}</b><br>
+        Status:
+        <b>{{if currentModel.isInvited (if currentModel.isSecondWave "Second Wave" "Invited") "Not Invited"}}</b><br>
+        {{/if}}
+      </fit>
+    </box>
+
+    <box xs="12" sm="4">
+      <h6>Guests on this Invitation</h6>
+      <ul class="invitation-list tier-2">
+        {{#each currentModel.guests as |guest|}}
+        <li class={{if guest.isInvited "" "not-invited"}}>
+          {{#link-to "auth.invitations.invitation.guest" currentModel.id guest.id}}
+          {{guest.name}}
+          {{/link-to}}
+          {{if guest.isChild " (child)" ""}}
+        </li>
+        {{else}}
+        No guests for this invite yet.
+        {{/each}}
+        <li>
+          <QuickAdd @onSubmit={{action invitationActions.addGuest currentModel}} />
+        </li>
+      </ul>
+    </box>
+  </hbox>
+
+  {{#if state.isEditing}}
+  {{#if currentModel.hasDirtyAttributes}}
+  <button onclick={{actions
               (action invitationActions.updateInvitation currentModel)
               (action (mut state.isEditing) false)
-            }}
-            >Save</button>
-        {{else}}
-          {{#if (eq currentModel.guests.length 0)}}
-            <button
-              onclick={{actions 
+            }}>Save</button>
+  {{else}}
+  {{#if (eq currentModel.guests.length 0)}}
+  <button onclick={{actions 
                 (action invitationActions.deleteInvitation currentModel)
                 (action (mut state.isEditing) false)
-              }}
-            >delete</button>
-          {{/if}}
-          <button
-            onclick={{action (mut state.isEditing) false}}
-          >Cancel</button>
-        {{/if}}
-      {{/if}}
-    {{/let}}
-  </ManageInvitation>
-  {{outlet}}
+              }}>delete</button>
+  {{/if}}
+  <button onclick={{action (mut state.isEditing) false}}>Cancel</button>
+  {{/if}}
+  {{/if}}
+  {{/let}}
+</ManageInvitation>
+{{outlet}}
 {{/liquid-bind}}

@@ -163,14 +163,14 @@ tr:nth-of-type(even).not-invited,
 ul.invitation-list.tier-2 > li:nth-of-type(odd).not-invited,
 .invitation-header.not-invited,
 .not-invited {
-  background: #b339399a;
+  background: #b33939;
 }
 
 tr:nth-of-type(even).second-wave,
 ul.invitation-list.tier-2 > li:nth-of-type(odd).second-wave,
 .invitation-header.second-wave,
 .second-wave {
-  background: #f4d804ee;
+  background: #f4d804;
 }
 
 ul.invitation-list h3 {
